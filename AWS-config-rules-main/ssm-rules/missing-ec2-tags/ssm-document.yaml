@@ -1,0 +1,36 @@
+---
+schemaVersion: '0.3'
+description: "Add required tags to an EC2 instance."
+assumeRole: "{{ AutomationAssumeRole }}"
+parameters:
+  InstanceId:
+    type: String
+    description: "(Required) EC2 instance ID to remediate."
+  AutomationAssumeRole:
+    type: String
+    description: "(Required) IAM role ARN that allows Automation to perform tagging."
+  TagEnvironment:
+    type: String
+    description: "(Required) Value for Environment tag."
+  TagOwner:
+    type: String
+    description: "(Required) Value for Owner tag."
+  TagProject:
+    type: String
+    description: "(Required) Value for Project tag."
+
+mainSteps:
+  - name: AddMissingTags
+    action: aws:executeAwsApi
+    inputs:
+      Service: ec2
+      Api: createTags
+      Resources:
+        - "{{ InstanceId }}"
+      Tags:
+        - Key: Environment
+          Value: "{{ TagEnvironment }}"
+        - Key: Owner
+          Value: "{{ TagOwner }}"
+        - Key: Project
+          Value: "{{ TagProject }}"
